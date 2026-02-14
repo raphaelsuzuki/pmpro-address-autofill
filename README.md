@@ -1,4 +1,4 @@
-# Address Autofill for Paid Memberships Pro
+# PMPro Address Autofill
 
 Enhance the membership checkout experience by allowing returning members to automatically populate their billing address fields from their last successful order—reducing friction and increasing conversion rates.
 
