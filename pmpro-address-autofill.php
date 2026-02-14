@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Address Autofill for Paid Memberships Pro
  * Description: Allows users to autofill their billing address from their last successful order.
- * Version: 1.6
+ * Version: 1.7
  * Author: Raphael Suzuki
  * Text Domain: pmpro-address-autofill
  * GitHub Plugin URI: https://github.com/raphaelsuzuki/pmpro-address-autofill
@@ -23,15 +23,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param object $order   The member order object.
  */
 function save_preferences_on_checkout( $user_id, $order ) {
-	// Security: Standard PMPro checkout includes its own nonces. 
-	// We only save the "always" preference if the user opted in.
-	if ( ! empty( $_POST['pmpro_address_autofill_always'] ) ) {
-		update_user_meta( $user_id, 'pmpro_address_autofill_always', '1' );
-	} else {
-		// Only update if the field was actually present in the POST to avoid overwriting on accidental submissions.
-		if ( isset( $_POST['pmpro_address_autofill_always_present'] ) ) {
-			update_user_meta( $user_id, 'pmpro_address_autofill_always', '0' );
-		}
+	// CSRF Protection: Verify nonce if present.
+	if ( isset( $_POST['pmpro_address_autofill_nonce'] ) && ! wp_verify_nonce( $_POST['pmpro_address_autofill_nonce'], 'pmpro_address_autofill_save_prefs' ) ) {
+		return;
+	}
+
+	// Strict Input Validation.
+	$always = ( isset( $_POST['pmpro_address_autofill_always'] ) && '1' === $_POST['pmpro_address_autofill_always'] ) ? '1' : '0';
+	
+	// Only update if the preference field was actually present in the form submission.
+	if ( isset( $_POST['pmpro_address_autofill_always_present'] ) ) {
+		update_user_meta( $user_id, 'pmpro_address_autofill_always', $always );
 	}
 }
 add_action( 'pmpro_after_checkout', __NAMESPACE__ . '\\save_preferences_on_checkout', 10, 2 );
@@ -86,8 +88,9 @@ function inject_checkout_ui() {
 
 	?>
 	<div id="pmpro_address_autofill_container" style="display: none;" aria-hidden="true">
-		<!-- Hidden field to signal the checkbox was present in the form -->
+		<!-- Hidden fields for security and state signaling -->
 		<input type="hidden" name="pmpro_address_autofill_always_present" value="1" />
+		<?php wp_nonce_field( 'pmpro_address_autofill_save_prefs', 'pmpro_address_autofill_nonce', false ); ?>
 
 		<?php if ( is_user_logged_in() && ! empty( $address_data ) ) : ?>
 			<div id="pmpro_address_autofill_logged_in" class="pmpro_address_autofill_logged_in" style="padding-bottom: 20px;">
