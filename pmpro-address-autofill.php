@@ -5,6 +5,8 @@
  * Version: 1.6
  * Author: Raphael Suzuki
  * Text Domain: pmpro-address-autofill
+ * GitHub Plugin URI: https://github.com/raphaelsuzuki/pmpro-address-autofill
+ * Primary Branch: main
  */
 
 namespace pmpro_address_autofill;
