@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Address Autofill for Paid Memberships Pro
  * Description: Allows users to autofill their billing address from their last successful order.
- * Version: 1.7
+ * Version: 1.7.0
  * Author: Raphael Suzuki
  * Text Domain: pmpro-address-autofill
  * GitHub Plugin URI: https://github.com/raphaelsuzuki/pmpro-address-autofill
