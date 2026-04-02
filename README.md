@@ -1,5 +1,10 @@
 # PMPro Address Autofill
 
+[![Last Updated](https://img.shields.io/github/last-commit/raphaelsuzuki/pmpro-address-autofill?label=Last%20Updated)](https://github.com/raphaelsuzuki/pmpro-address-autofill/commits/main)
+[![License: GPL v2](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![PHP 7.2+](https://img.shields.io/badge/PHP-7.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![WordPress 5.0+](https://img.shields.io/badge/WordPress-5.0%2B-blue?logo=wordpress)](https://wordpress.org/)
+
 Enhance the membership checkout experience by allowing returning members to automatically populate their billing address fields from their last successful order—reducing friction and increasing conversion rates.
 
 Perfect for membership sites with high renewal rates or multiple membership levels where users frequently return to the checkout page.
