@@ -118,9 +118,10 @@ function inject_checkout_ui()
 		<?php if (is_user_logged_in() && ! empty($address_data)) : ?>
 			<div id="pmpro_address_autofill_logged_in" class="pmpro_address_autofill_logged_in" style="padding-bottom: 20px;">
 				<p class="pmpro_address_autofill_links">
-					<a href="#" id="pmpro_address_autofill_toggle" role="button">
-						<?php echo $is_prefilled ? esc_html__('Clear address', 'pmpro-address-autofill') : esc_html__('Fill from last saved address', 'pmpro-address-autofill'); ?>
-					</a>
+                    <button type="button" id="pmpro_address_autofill_toggle" aria-pressed="<?php echo $is_prefilled ? 'true' : 'false'; ?>" style="color: var(--pmpro--color--accent); cursor: pointer; font-size: 16px; font-style: normal; font-weight: 700; letter-spacing: normal; line-height: 16px; overflow-wrap: break-word; text-align: center; text-rendering: geometricprecision; text-transform: none; word-break: break-word; text-decoration: none; display: inline-block; background: none; border: 0; padding: 0;">
+                        <span class="pmpro_icon pmpro_icon-refresh" aria-hidden="true" style="display: inline-block; vertical-align: middle; line-height: 0; margin-right: 6px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather <?php echo $is_prefilled ? 'feather-refresh-cw-off' : 'feather-refresh-cw'; ?>"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path><?php if ($is_prefilled) : ?><line x1="1" y1="1" x2="23" y2="23"></line><?php endif; ?></svg></span>
+                        <span class="pmpro_address_autofill_toggle_state"><?php echo $is_prefilled ? esc_html__('Clear address', 'pmpro-address-autofill') : esc_html__('Fill from last saved address', 'pmpro-address-autofill'); ?></span>
+                    </button>
 				</p>
 				<div id="pmpro_address_autofill_always_container" style="<?php echo $is_prefilled ? '' : 'display: none;'; ?>">
 					<label for="pmpro_address_autofill_always" class="pmpro_label-checkbox">
@@ -175,6 +176,45 @@ function inject_checkout_ui()
 					if ($toggle.length && addressData) {
 						const $alwaysContainer = $('#pmpro_address_autofill_always_container');
 						const $alwaysCheckbox = $('#pmpro_address_autofill_always');
+                        const $toggleIcon = $toggle.find('.pmpro_icon');
+                        const $toggleState = $toggle.find('.pmpro_address_autofill_toggle_state');
+                        const clearAddressLabel = <?php echo wp_json_encode(__('Clear address', 'pmpro-address-autofill')); ?>;
+                        const fillAddressLabel = <?php echo wp_json_encode(__('Fill from last saved address', 'pmpro-address-autofill')); ?>;
+                        const svgNamespace = 'http://www.w3.org/2000/svg';
+
+                        const createSvgElement = function(tagName, attributes) {
+                            const element = document.createElementNS(svgNamespace, tagName);
+                            Object.keys(attributes).forEach(function(key) {
+                                element.setAttribute(key, attributes[key]);
+                            });
+                            return element;
+                        };
+
+                        const createRefreshIcon = function(isOff) {
+                            const svg = createSvgElement('svg', {
+                                xmlns: svgNamespace,
+                                width: '20',
+                                height: '20',
+                                viewBox: '0 0 24 24',
+                                fill: 'none',
+                                stroke: 'currentColor',
+                                'stroke-width': '2',
+                                'stroke-linecap': 'round',
+                                'stroke-linejoin': 'round',
+                                class: isOff ? 'feather feather-refresh-cw-off' : 'feather feather-refresh-cw'
+                            });
+
+                            svg.appendChild(createSvgElement('polyline', { points: '23 4 23 10 17 10' }));
+                            svg.appendChild(createSvgElement('polyline', { points: '1 20 1 14 7 14' }));
+                            svg.appendChild(createSvgElement('path', { d: 'M3.51 9a9 9 0 0 1 14.13-3.36L23 10' }));
+                            svg.appendChild(createSvgElement('path', { d: 'M20.49 15a9 9 0 0 1-14.13 3.36L1 14' }));
+
+                            if (isOff) {
+                                svg.appendChild(createSvgElement('line', { x1: '1', y1: '1', x2: '23', y2: '23' }));
+                            }
+
+                            return svg;
+                        };
 						const fieldSelectors = [
 							'#bfirstname', '#blastname', '#baddress1', '#baddress2', 
 							'#bcity', '#bstate', '#bzipcode', '#bcountry', '#bphone'
@@ -182,8 +222,8 @@ function inject_checkout_ui()
 						
 						let isFilled = <?php echo $is_prefilled ? 'true' : 'false'; ?>;
 
-						$toggle.on('click', function(e) {
-							e.preventDefault();
+                        $toggle.on('click', function(e) {
+                                e.preventDefault();
 							try {
 								if (!isFilled) {
 									// Safe Auto-fill using sanitized data
@@ -203,7 +243,13 @@ function inject_checkout_ui()
 										$('#bconfirmemail').val(addressData.bemail);
 									}
 									
-									$toggle.text('<?php echo esc_js(__('Clear address', 'pmpro-address-autofill')); ?>');
+                                    if ($toggleState.length) {
+                                        $toggleState.text(clearAddressLabel);
+                                    }
+                                    if ($toggleIcon.length) {
+                                        $toggleIcon.empty().append(createRefreshIcon(true));
+                                    }
+                                    $toggle.attr('aria-pressed', 'true');
 									if ($alwaysContainer.length) $alwaysContainer.slideDown();
 									isFilled = true;
 								} else {
@@ -211,7 +257,13 @@ function inject_checkout_ui()
 									$.each(fieldSelectors, function(i, selector) {
 										$(selector).val('').trigger('change');
 									});
-									$toggle.text('<?php echo esc_js(__('Fill from last saved address', 'pmpro-address-autofill')); ?>');
+                                    if ($toggleState.length) {
+                                        $toggleState.text(fillAddressLabel);
+                                    }
+                                    if ($toggleIcon.length) {
+                                        $toggleIcon.empty().append(createRefreshIcon(false));
+                                    }
+                                    $toggle.attr('aria-pressed', 'false');
 									if ($alwaysContainer.length) $alwaysContainer.slideUp();
 									if ($alwaysCheckbox.length) $alwaysCheckbox.prop('checked', false);
 									isFilled = false;
