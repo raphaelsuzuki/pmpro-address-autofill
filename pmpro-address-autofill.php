@@ -178,8 +178,43 @@ function inject_checkout_ui()
 						const $alwaysCheckbox = $('#pmpro_address_autofill_always');
                         const $toggleIcon = $toggle.find('.pmpro_icon');
                         const $toggleState = $toggle.find('.pmpro_address_autofill_toggle_state');
-                        const refreshIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path></svg>';
-                        const refreshOffIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-cw-off"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+                        const clearAddressLabel = <?php echo wp_json_encode(__('Clear address', 'pmpro-address-autofill')); ?>;
+                        const fillAddressLabel = <?php echo wp_json_encode(__('Fill from last saved address', 'pmpro-address-autofill')); ?>;
+                        const svgNamespace = 'http://www.w3.org/2000/svg';
+
+                        const createSvgElement = function(tagName, attributes) {
+                            const element = document.createElementNS(svgNamespace, tagName);
+                            Object.keys(attributes).forEach(function(key) {
+                                element.setAttribute(key, attributes[key]);
+                            });
+                            return element;
+                        };
+
+                        const createRefreshIcon = function(isOff) {
+                            const svg = createSvgElement('svg', {
+                                xmlns: svgNamespace,
+                                width: '20',
+                                height: '20',
+                                viewBox: '0 0 24 24',
+                                fill: 'none',
+                                stroke: 'currentColor',
+                                'stroke-width': '2',
+                                'stroke-linecap': 'round',
+                                'stroke-linejoin': 'round',
+                                class: isOff ? 'feather feather-refresh-cw-off' : 'feather feather-refresh-cw'
+                            });
+
+                            svg.appendChild(createSvgElement('polyline', { points: '23 4 23 10 17 10' }));
+                            svg.appendChild(createSvgElement('polyline', { points: '1 20 1 14 7 14' }));
+                            svg.appendChild(createSvgElement('path', { d: 'M3.51 9a9 9 0 0 1 14.13-3.36L23 10' }));
+                            svg.appendChild(createSvgElement('path', { d: 'M20.49 15a9 9 0 0 1-14.13 3.36L1 14' }));
+
+                            if (isOff) {
+                                svg.appendChild(createSvgElement('line', { x1: '1', y1: '1', x2: '23', y2: '23' }));
+                            }
+
+                            return svg;
+                        };
 						const fieldSelectors = [
 							'#bfirstname', '#blastname', '#baddress1', '#baddress2', 
 							'#bcity', '#bstate', '#bzipcode', '#bcountry', '#bphone'
@@ -187,7 +222,8 @@ function inject_checkout_ui()
 						
 						let isFilled = <?php echo $is_prefilled ? 'true' : 'false'; ?>;
 
-                        $toggle.on('click', function() {
+                        $toggle.on('click', function(e) {
+                                e.preventDefault();
 							try {
 								if (!isFilled) {
 									// Safe Auto-fill using sanitized data
@@ -208,10 +244,10 @@ function inject_checkout_ui()
 									}
 									
                                     if ($toggleState.length) {
-                                        $toggleState.text('<?php echo esc_js(__('Clear address', 'pmpro-address-autofill')); ?>');
+                                        $toggleState.text(clearAddressLabel);
                                     }
                                     if ($toggleIcon.length) {
-                                        $toggleIcon.html(refreshOffIconSvg);
+                                        $toggleIcon.empty().append(createRefreshIcon(true));
                                     }
                                     $toggle.attr('aria-pressed', 'true');
 									if ($alwaysContainer.length) $alwaysContainer.slideDown();
@@ -222,10 +258,10 @@ function inject_checkout_ui()
 										$(selector).val('').trigger('change');
 									});
                                     if ($toggleState.length) {
-                                        $toggleState.text('<?php echo esc_js(__('Fill from last saved address', 'pmpro-address-autofill')); ?>');
+                                        $toggleState.text(fillAddressLabel);
                                     }
                                     if ($toggleIcon.length) {
-                                        $toggleIcon.html(refreshIconSvg);
+                                        $toggleIcon.empty().append(createRefreshIcon(false));
                                     }
                                     $toggle.attr('aria-pressed', 'false');
 									if ($alwaysContainer.length) $alwaysContainer.slideUp();
