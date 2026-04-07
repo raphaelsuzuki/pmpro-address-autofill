@@ -1,5 +1,6 @@
 # PMPro Address Autofill
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e124d94e5d44a0b91abc85e07d48c25)](https://app.codacy.com/gh/raphaelsuzuki/pmpro-address-autofill?utm_source=github.com&utm_medium=referral&utm_content=raphaelsuzuki/pmpro-address-autofill&utm_campaign=Badge_Grade)
 [![Last Updated](https://img.shields.io/github/last-commit/raphaelsuzuki/pmpro-address-autofill?label=Last%20Updated)](https://github.com/raphaelsuzuki/pmpro-address-autofill/commits/main)
 [![License: GPL v2](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![PHP 7.2+](https://img.shields.io/badge/PHP-7.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
