@@ -26,7 +26,11 @@ if (! defined('ABSPATH')) {
  */
 function save_preferences_on_checkout($user_id, $order)
 {
-    if (! isset($_POST['pmpro_address_autofill_always_present'])) {
+    $always_present = isset($_POST['pmpro_address_autofill_always_present'])
+        ? sanitize_text_field(wp_unslash($_POST['pmpro_address_autofill_always_present']))
+        : '';
+
+    if ('1' !== $always_present) {
         return;
     }
 
@@ -38,10 +42,10 @@ function save_preferences_on_checkout($user_id, $order)
         return;
     }
 
-    $always = '0';
-    if (isset($_POST['pmpro_address_autofill_always'])) {
-        $always = '1' === sanitize_text_field(wp_unslash($_POST['pmpro_address_autofill_always'])) ? '1' : '0';
-    }
+    $always_value = isset($_POST['pmpro_address_autofill_always'])
+        ? sanitize_text_field(wp_unslash($_POST['pmpro_address_autofill_always']))
+        : '';
+    $always = ('1' === $always_value) ? '1' : '0';
 
     update_user_meta($user_id, 'pmpro_address_autofill_always', $always);
 }
@@ -114,6 +118,7 @@ function inject_checkout_ui()
     $address_data = is_user_logged_in() ? get_address_data($user_id) : false;
     $always       = is_user_logged_in() ? get_user_meta($user_id, 'pmpro_address_autofill_always', true) : '0';
     $is_prefilled = ('1' === (string) $always);
+    $json_flags   = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_APOS;
 
     ?>
 	<div id="pmpro_address_autofill_container" style="display: none;" aria-hidden="true">
@@ -126,7 +131,7 @@ function inject_checkout_ui()
 				<p class="pmpro_address_autofill_links">
                     <button type="button" id="pmpro_address_autofill_toggle" aria-pressed="<?php echo esc_attr($is_prefilled ? 'true' : 'false'); ?>" style="color: var(--pmpro--color--accent); cursor: pointer; font-size: 16px; font-style: normal; font-weight: 700; letter-spacing: normal; line-height: 16px; overflow-wrap: break-word; text-align: center; text-rendering: geometricprecision; text-transform: none; word-break: break-word; text-decoration: none; display: inline-block; background: none; border: 0; padding: 0;">
                         <span class="pmpro_icon pmpro_icon-refresh" aria-hidden="true" style="display: inline-block; vertical-align: middle; line-height: 0; margin-right: 6px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather <?php echo esc_attr($is_prefilled ? 'feather-refresh-cw-off' : 'feather-refresh-cw'); ?>"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path><?php if ($is_prefilled) : ?><line x1="1" y1="1" x2="23" y2="23"></line><?php endif; ?></svg></span>
-                        <span class="pmpro_address_autofill_toggle_state"><?php echo esc_html($is_prefilled ? __('Clear address', 'pmpro-address-autofill') : __('Fill from last saved address', 'pmpro-address-autofill')); ?></span>
+                        <span class="pmpro_address_autofill_toggle_state"><?php if ($is_prefilled) : ?><?php esc_html_e('Clear address', 'pmpro-address-autofill'); ?><?php else : ?><?php esc_html_e('Fill from last saved address', 'pmpro-address-autofill'); ?><?php endif; ?></span>
                     </button>
 				</p>
                 <div id="pmpro_address_autofill_always_container" style="<?php echo esc_attr($is_prefilled ? '' : 'display: none;'); ?>">
@@ -157,8 +162,8 @@ function inject_checkout_ui()
 					
 					const $targetCard = $targetFieldset.find('.pmpro_card');
 
-					// Hardened JSON output
-                    const addressData = <?php echo wp_json_encode($address_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_APOS); ?>;
+                    // Emit JS literals directly from wp_json_encode for inline script contexts.
+                    const addressData = <?php echo wp_json_encode($address_data, $json_flags); ?>;
 
 					// Logged-in: Move after the legend.
 					const $loggedInUI = $('#pmpro_address_autofill_logged_in');
@@ -184,8 +189,8 @@ function inject_checkout_ui()
 						const $alwaysCheckbox = $('#pmpro_address_autofill_always');
                         const $toggleIcon = $toggle.find('.pmpro_icon');
                         const $toggleState = $toggle.find('.pmpro_address_autofill_toggle_state');
-                        const clearAddressLabel = <?php echo wp_json_encode(__('Clear address', 'pmpro-address-autofill')); ?>;
-                        const fillAddressLabel = <?php echo wp_json_encode(__('Fill from last saved address', 'pmpro-address-autofill')); ?>;
+                        const clearAddressLabel = <?php echo wp_json_encode(__('Clear address', 'pmpro-address-autofill'), $json_flags); ?>;
+                        const fillAddressLabel = <?php echo wp_json_encode(__('Fill from last saved address', 'pmpro-address-autofill'), $json_flags); ?>;
                         const svgNamespace = 'http://www.w3.org/2000/svg';
 
                         const createSvgElement = function(tagName, attributes) {
@@ -226,7 +231,7 @@ function inject_checkout_ui()
 							'#bcity', '#bstate', '#bzipcode', '#bcountry', '#bphone'
 						];
 						
-                        let isFilled = <?php echo wp_json_encode($is_prefilled); ?>;
+                        let isFilled = <?php echo wp_json_encode($is_prefilled, $json_flags); ?>;
 
                         $toggle.on('click', function(e) {
                                 e.preventDefault();
