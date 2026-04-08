@@ -1,6 +1,8 @@
-# PMPro Address Autofill
+# Address Autofill for Paid Memberships Pro
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/14016903be604f87a4c016ebb8ae7121)](https://app.codacy.com/gh/raphaelsuzuki/pmpro-address-autofill/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Last Updated](https://img.shields.io/github/last-commit/raphaelsuzuki/pmpro-address-autofill?label=Last%20Updated)](https://github.com/raphaelsuzuki/pmpro-address-autofill/commits/main)
+
 [![License: GPL v2](https://img.shields.io/badge/License-GPLv2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![PHP 7.2+](https://img.shields.io/badge/PHP-7.2%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![WordPress 5.0+](https://img.shields.io/badge/WordPress-5.0%2B-blue?logo=wordpress)](https://wordpress.org/)
@@ -9,7 +11,10 @@ Enhance the membership checkout experience by allowing returning members to auto
 
 Perfect for membership sites with high renewal rates or multiple membership levels where users frequently return to the checkout page.
 
-**Notice:** This plugin is designed for Paid Memberships Pro. It securely retrieves address data from the user's profile or previous successful orders.
+**Notice:** This plugin is designed for Paid Memberships Pro and is an unofficial, third‑party add‑on not directly affiliated with or endorsed by Paid Memberships Pro.
+
+
+
 
 ---
 
