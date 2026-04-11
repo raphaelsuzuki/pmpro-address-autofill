@@ -122,6 +122,11 @@ function inject_checkout_ui()
 
     ?>
 	<div id="pmpro_address_autofill_container" style="display: none;" aria-hidden="true">
+        <style type="text/css">
+            .wfls-remember-device-wrapper label {
+                justify-content: flex-start !important;
+            }
+        </style>
 		<!-- Hidden fields for security and state signaling -->
 		<input type="hidden" name="pmpro_address_autofill_always_present" value="1" />
 		<?php wp_nonce_field('pmpro_address_autofill_save_prefs', 'pmpro_address_autofill_nonce', false); ?>
