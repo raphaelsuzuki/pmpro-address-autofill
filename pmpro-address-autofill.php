@@ -90,7 +90,7 @@ function inject_checkout_ui() {
 	<div id="pmpro_address_autofill_container" style="display: none;" aria-hidden="true">
         <style type="text/css">
             .wfls-remember-device-wrapper label {
-                justify-content: left !important;
+                justify-content: flex-start !important;
             }
         </style>
 		<!-- Hidden fields for security and state signaling -->
