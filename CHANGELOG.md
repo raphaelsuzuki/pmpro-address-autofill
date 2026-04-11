@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.8.2](https://github.com/raphaelsuzuki/pmpro-address-autofill/compare/v1.8.1...v1.8.2) (2026-04-11)
+
+
+### Bug Fixes
+
+* align wfls remember-device label to the left ([#11](https://github.com/raphaelsuzuki/pmpro-address-autofill/issues/11)) ([a80ba66](https://github.com/raphaelsuzuki/pmpro-address-autofill/commit/a80ba667b0fe0c531f1748e70ff9ae73fd0c8c2e))
+* escape dynamic output, enforce nonce, and pin CI actions ([#7](https://github.com/raphaelsuzuki/pmpro-address-autofill/issues/7)) ([d3add7f](https://github.com/raphaelsuzuki/pmpro-address-autofill/commit/d3add7f842624e8e6b38d087525eceda7f09ddc1))
+
 ## [1.8.1](https://github.com/raphaelsuzuki/pmpro-address-autofill/compare/v1.8.0...v1.8.1) (2026-04-04)
 
 
